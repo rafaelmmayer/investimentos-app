@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+    db:
+      image: postgres:13.4-alpine
+      restart: always
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+      logging:
+        options:
+          max-size: 10m
+          max-file: "3"
+      ports:
+        - '5432:5432'
+      volumes: 
+        - ./data/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      networks:
+        - mynetwork
+
+    webapi:
+      image: investimentoapi
+      ports: 
+        - 8080:80
+      depends_on:
+        - db
+      networks:
+        - mynetwork
+       
+networks:
+  mynetwork:
+    driver: bridge
+        
